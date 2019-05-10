@@ -19,10 +19,10 @@ def plot_image(image):
 
 if __name__ == "__main__":
     # Read reference image
-    image = cv2.imread('mona.jpg')
+    image = cv2.imread('twitter.png')
     image = cv2.cvtColor(image,cv2.COLOR_BGR2RGB)  # Convert color loaded by OpenCV
 
-    number_generations = 10
+    number_generations = 100
 
     generation = Evolve(image, pop_size=10, crossover_rate=0.5, individual_size=100)
     generation.evaluate()
