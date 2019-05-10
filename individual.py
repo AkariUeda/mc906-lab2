@@ -2,7 +2,8 @@ import numpy as np
 
 from circle import Circle
 from image_from_circles import ImageFromCircles
-from main import rms
+from utils import rms
+import matplotlib.pyplot as plt
 
 class Individual:
     def __init__(self, size, circles=[]):
@@ -32,8 +33,30 @@ class Individual:
         assert isinstance(image, np.ndarray) and len(image.shape) == 3 and image.shape[2] == 3
         
         self.rendered = ImageFromCircles(circles=self.circles).render(image.shape)
-        
-        return -rms(image, self.rendered)
+        self.fitness = -rms(image, self.rendered)
+        return self.fitness
+
+    def plot_image(self):
+        # Prepare canvas
+        fig, ax = plt.subplots(figsize=(6, 6))
+
+        # Disable plot ticks and their labels
+        ax.tick_params(axis='both', which='both', 
+                    bottom=False, left=False,
+                    labelbottom=False, labelleft=False)
+        ax.imshow(self.rendered)
+        plt.show()
+
+    def save_img(self, filename):
+        # Prepare canvas
+        fig, ax = plt.subplots(figsize=(6, 6))
+
+        # Disable plot ticks and their labels
+        ax.tick_params(axis='both', which='both', 
+                    bottom=False, left=False,
+                    labelbottom=False, labelleft=False)
+        ax.imshow(self.rendered)
+        fig.savefig(filename)
 
 if __name__ == "__main__":
     Individual(size=1, circles=[Circle(left=None, top=None, radius=None, color=None, alpha=None)])
