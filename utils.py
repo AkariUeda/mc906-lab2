@@ -29,3 +29,9 @@ def plot_image(image):
 def save_image(filename, image):
     fig, ax = prepare_canvas(image)
     fig.savefig(filename)
+
+def hsv_to_rgb(color):
+    """ Returns a (r,g,b) converted from the HSV color """
+    src = np.array([[color]], dtype=np.uint8)
+    color = list(map(int, cv2.cvtColor(src, cv2.COLOR_HSV2RGB)[0][0]))
+    return color

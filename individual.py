@@ -34,7 +34,7 @@ class Individual:
         assert isinstance(image, np.ndarray) and len(image.shape) == 3 and image.shape[2] == 3
         
         self.rendered = ImageFromCircles(circles=self.circles).render(image.shape)
-        self.fitness = -rms(image, self.rendered)
+        self.fitness = rms(image, self.rendered)
         return self.fitness
 
     def plot_image(self):
