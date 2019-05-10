@@ -1,21 +1,6 @@
 import cv2
-import numpy as np
 
 from evolve import Evolve
-
-def plot_image(image):
-    from matplotlib import pyplot as plt
-    # Prepare canvas
-    fig, ax = plt.subplots(figsize=(6, 6))
-
-    # Disable plot ticks and their labels
-    ax.tick_params(axis='both', which='both', 
-                   bottom=False, left=False,
-                   labelbottom=False, labelleft=False)
-    ax.imshow(image)
-    plt.show()
-
-
 
 if __name__ == "__main__":
     # Read reference image
@@ -24,12 +9,12 @@ if __name__ == "__main__":
 
     number_generations = 100
 
-    generation = Evolve(image, pop_size=10, crossover_rate=0.5, individual_size=100)
+    generation = Evolve(image, pop_size=10, crossover_rate=0.5, individual_size=100, mutation_rate=0.2)
     generation.evaluate()
-    generation.save_img()
+    generation.save_image()
 
-    for i in range(0, number_generations):
+    for i in range(number_generations):
         generation.crossover()
-        generation.mutation()
+        generation.mutate()
         generation.evaluate()
-        generation.save_img()
+        generation.save_image()

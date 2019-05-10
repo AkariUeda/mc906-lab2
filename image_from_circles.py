@@ -5,18 +5,8 @@ import random
 from circle import Circle
 
 class ImageFromCircles:
-    def __init__(self, pop=[], circles=None):
-        if circles is not None:
-            self.circles = circles
-        else:
-            self.circles = []
-            for ind in pop:
-                x, y = ind[:2]
-                radius = ind[2]
-                color = ind[3:6]
-                alpha = ind[6]
-                self.circles.append(
-                    Circle(x, y, radius, self.hsv_to_rgb(color), alpha))
+    def __init__(self, circles=None):
+        self.circles = circles
 
     # TODO consider stop using OpenCV for this conversion
     def hsv_to_rgb(self, color):

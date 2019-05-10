@@ -2,8 +2,7 @@ import numpy as np
 
 from circle import Circle
 from image_from_circles import ImageFromCircles
-from utils import rms
-import matplotlib.pyplot as plt
+from utils import rms, plot_image, save_image
 
 class Individual:
     def __init__(self, size, circles=[]):
@@ -21,14 +20,16 @@ class Individual:
         self.fitness = 0
 
         if circles:
+            self.circles = circles
             if len(circles) < size:
                 print("Missing {} circles. Created them randomly".format(size - len(circles)))
-            self.circles = circles
+            
 
+        # Fill in missing circles
         for i in range(len(self.circles), size):
             self.circles.append(Circle())
 
-    def fitness(self, image):
+    def update_fitness(self, image):
         # Assert image is an array-like with shape=(h, w, 3)
         assert isinstance(image, np.ndarray) and len(image.shape) == 3 and image.shape[2] == 3
         
@@ -37,26 +38,11 @@ class Individual:
         return self.fitness
 
     def plot_image(self):
-        # Prepare canvas
-        fig, ax = plt.subplots(figsize=(6, 6))
+        plot_image(self.rendered)
 
-        # Disable plot ticks and their labels
-        ax.tick_params(axis='both', which='both', 
-                    bottom=False, left=False,
-                    labelbottom=False, labelleft=False)
-        ax.imshow(self.rendered)
-        plt.show()
-
-    def save_img(self, filename):
-        # Prepare canvas
-        fig, ax = plt.subplots(figsize=(6, 6))
-
-        # Disable plot ticks and their labels
-        ax.tick_params(axis='both', which='both', 
-                    bottom=False, left=False,
-                    labelbottom=False, labelleft=False)
-        ax.imshow(self.rendered)
-        fig.savefig(filename)
+    def save_image(self, filename):
+        save_image(filename, self.rendered)
 
 if __name__ == "__main__":
-    Individual(size=1, circles=[Circle(left=None, top=None, radius=None, color=None, alpha=None)])
+    image = cv2.imread('mona.jpg')
+    Individual(size=1, circles=[Circle()]).update_fitness(image)
