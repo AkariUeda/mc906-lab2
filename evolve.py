@@ -45,10 +45,11 @@ class Evolve:
         self.pop = pop
 
     def mutation(self):
-        # pick 10% of the population individuals to mutate
-        mi = [random.randint(0,self.pop_size) for i in range(int(0.1*self.pop_size))]
+        # pick 20% of the population individuals to mutate
+        mi = [random.randint(0,self.pop_size-1) for i in range(int(0.2*self.pop_size))]
+        print("Mutating individuals: %d, %d" % (mi[0], mi[1]))
+        # substitute these 20% with random individuals
         
-        # substitute these 10% with random individuals
         for idx in mi:
             self.pop[idx] = Individual(self.individual_size)
             
@@ -62,7 +63,7 @@ class Evolve:
 
 
     def save_img(self):
-        filename = 'generation_' + str(self.generation) + '.png'
+        filename = './results/generation_' + str(self.generation) + '.png'
         print(filename)
         self.pop[0].save_img(filename)
 

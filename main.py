@@ -24,7 +24,7 @@ if __name__ == "__main__":
 
     number_generations = 10
 
-    generation = Evolve(image, pop_size=10, crossover_rate=0.5, individual_size=50)
+    generation = Evolve(image, pop_size=10, crossover_rate=0.5, individual_size=100)
     generation.evaluate()
     generation.save_img()
 
