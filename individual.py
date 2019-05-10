@@ -17,10 +17,9 @@ class Individual:
         assert all([isinstance(circle, Circle) for circle in circles])
 
         self.circles = []
+        self.fitness = 0
 
         if circles:
-            
-
             if len(circles) < size:
                 print("Missing {} circles. Created them randomly".format(size - len(circles)))
             self.circles = circles
