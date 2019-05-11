@@ -11,6 +11,9 @@ def rms(a, b):
         sum_of_squares = sum(value*(idx**2) for idx, value in zip(idxs, values))
         return np.sqrt(sum_of_squares / pixel_count)
 
+def dif_imgs(a,b):
+        return sum((a-b).flatten()**2)
+
 def prepare_canvas(image, figax=None):
     # Prepare canvas
     fig, ax = figax if figax is not None else plt.subplots(figsize=(6, 6))

@@ -1,9 +1,9 @@
 import numpy as np
 import random
-
+import cv2
 from circle import Circle
 from image_from_circles import ImageFromCircles
-from utils import rms, plot_image, save_image
+from utils import rms, plot_image, save_image, dif_imgs
 from skimage.measure import compare_ssim
 
 class Individual:
@@ -49,13 +49,17 @@ class Individual:
         
         self.rendered = ImageFromCircles(circles=self.circles).render(image.shape)
         # self.fitness = rms(image, self.rendered)
-        self.fitness = -compare_ssim(image, self.rendered, multichannel=True)
+        # self.fitness = -compare_ssim(image, self.rendered, multichannel=True)
+        self.fitness = dif_imgs(image, self.rendered)
         return self.fitness
 
-    def mutate(self, mutation_rate):
+    def mutate(self, mutation_rate, image):
         affected_genes = int(self.individual_size*mutation_rate)
         for gene in random.sample(range(self.individual_size), affected_genes):
-            self.circles[gene] = Circle()
+            self.circles[gene] = Circle(image)
+        if len(self.circles) < 300:
+            self.circles.append(Circle())
+            self.individual_size += 1
 
     def plot_image(self, figax=None):
         return plot_image(self.rendered, figax)

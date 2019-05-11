@@ -18,16 +18,15 @@ class Evolve:
         self.crossover_rate = crossover_rate
         self.mutation_rate = mutation_rate
         self.unmutable_ratio = unmutable_ratio
-        self.individual_size = individual_size
         self.objective = objective  # Not used
 
         # Creates a random initial population with `pop_size` members
         self.pop = []
         for ind in initial_pop:
-            self.pop.append(Individual(individual_size, image=image, circles=ind.circles))
+            self.pop.append(Individual(1, image=image, circles=ind.circles))
 
         for i in range(len(initial_pop), pop_size):
-            self.pop.append(Individual(individual_size, image=image))
+            self.pop.append(Individual(1, image=image))
 
         # Initialize counter
         self.generation = 0
@@ -36,7 +35,6 @@ class Evolve:
         # New generation
         self.generation += 1
         pop = []
-
         # Generates pop_size individuals from crossover
         for i in range(self.pop_size):
             # Get two parents i the top "crossover_rate" individuals
@@ -44,14 +42,19 @@ class Evolve:
                         random.randint(0,int(self.crossover_rate*self.pop_size))]
 
             # choose from which parent we are going to pick each gene
-            ind_circles = [random.randint(0,1) for j in range(self.individual_size)]
+            child_size = min(self.pop[parents[0]].individual_size, self.pop[parents[1]].individual_size)
+            ind_circles = [random.randint(0,1) for j in range(child_size)]
             circles = []
-            for j in range(self.individual_size):
+            for j in range(child_size):
                 indx = ind_circles[j]
                 parent = self.pop[parents[indx]]
                 circles.append(parent.circles[j])
             
-            pop.append(Individual(self.individual_size, circles=circles))
+            # circles = []
+            # circles.extend(self.pop[parents[0]].circles[:self.pop[parents[0]].individual_size//2])
+            # circles.extend(self.pop[parents[1]].circles[:self.pop[parents[1]].individual_size//2])
+
+            pop.append(Individual(len(circles), circles=circles))
 
         # Update children fitness
         evaluate(pop, self.original_image)
@@ -80,10 +83,12 @@ class Evolve:
         return result
 
     def mutate(self):
+        evaluate(self.pop, self.original_image)
         keep = int(self.unmutable_ratio*self.pop_size)
         # print('keep', keep, 'unmutated')
+        print(keep)
         for ind in self.pop[keep:]:
-            ind.mutate(self.mutation_rate)
+            ind.mutate(self.mutation_rate, self.original_image)
 
     def evaluate(self):
         evaluate(self.pop, self.original_image)
