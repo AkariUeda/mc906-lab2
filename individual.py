@@ -24,11 +24,22 @@ class Individual:
             self.circles = circles
             if len(circles) < size:
                 print("Missing {} circles. Created them randomly".format(size - len(circles)))
-            
 
         # Fill in missing circles
         for i in range(len(self.circles), size):
             self.circles.append(Circle(image=image))
+
+    def __lt__(self, other):
+        return (self.fitness < other.fitness)
+
+    def __le__(self,other):
+        return (self.fitness <= other.fitness)
+
+    def __gt__(self,other):
+        return (self.fitness > other.fitness)
+
+    def __ge__(self,other):
+        return (self.fitness >= other.fitness)
 
     def update_fitness(self, image):
         # Assert image is an array-like with shape=(h, w, 3)

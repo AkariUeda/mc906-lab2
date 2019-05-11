@@ -38,7 +38,20 @@ class Evolve:
                 circles.append(parent.circles[j])
             
             pop.append(Individual(self.individual_size, circles=circles))
-        self.pop = pop
+
+        self.evaluate(pop)
+        parents = self.pop
+        self.pop = []
+        i, j = 0, 0
+        # Merge the best between parents and children
+        while i + j < self.pop_size:
+            # Less is better
+            if pop[i] < parents[j]:
+                self.pop.append(pop[i])
+                i += 1
+            else:
+                self.pop.append(parents[j])
+                j += 1
 
     def mutate(self):
         # pick a fraction of the population individuals to mutate
@@ -50,15 +63,17 @@ class Evolve:
         for idx in mi:
             self.pop[idx] = Individual(self.individual_size)
 
-    def evaluate(self):
+    def evaluate(self, pop=None):
+        population = pop or self.pop
         # calculate the fitness for the entire population
-        for ind in self.pop:
+        for ind in population:
             ind.update_fitness(self.original_image)
 
         # sort population by fitness
-        self.pop.sort(key=lambda ind: ind.fitness)
+        population.sort(key=lambda ind: ind.fitness)
 
-        print('Gen:', self.generation, 'Fitness:', self.pop[0].fitness)
+        if pop is None:
+            print('Gen:', self.generation, 'Fitness:', self.pop[0].fitness)
 
 
     def plot_image(self):

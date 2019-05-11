@@ -19,7 +19,7 @@ class Circle:
         if left is None:
             self.left = random.uniform(0,1)
             self.top = random.uniform(0,1)
-            self.radius = random.uniform(0,1)
+            self.radius = random.uniform(5,50)
             if image is not None:
                 h, w, depth = image.shape
                 x = int(w * self.left)
@@ -27,7 +27,7 @@ class Circle:
                 self.color = [int(c) for c in image[x, y]]
             else:
                 self.color = [random.uniform(0,255),random.uniform(0,255),random.uniform(0,255)]
-            self.alpha = random.uniform(0,1)
+            self.alpha = 0.8 #random.uniform(0,1)
         else:
             self.left = left
             self.top = top
@@ -42,7 +42,7 @@ class Circle:
         x = int(w * self.left)
         y = int(h * self.top)
         
-        radius = int(self.radius * image.shape[0] / 3)
+        radius = int(self.radius)
         color = self.color
         alpha = self.alpha
         
