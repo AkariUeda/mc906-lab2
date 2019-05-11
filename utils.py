@@ -11,20 +11,22 @@ def rms(a, b):
         sum_of_squares = sum(value*(idx**2) for idx, value in zip(idxs, values))
         return np.sqrt(sum_of_squares / pixel_count)
 
-def prepare_canvas(image):
+def prepare_canvas(image, figax=None):
     # Prepare canvas
-    fig, ax = plt.subplots(figsize=(6, 6))
+    fig, ax = figax if figax is not None else plt.subplots(figsize=(6, 6))
 
     # Disable plot ticks and their labels
     ax.tick_params(axis='both', which='both', 
-                   bottom=False, left=False,
-                   labelbottom=False, labelleft=False)
+                bottom=False, left=False,
+                labelbottom=False, labelleft=False)
     ax.imshow(image)
+    fig.canvas.draw()
     return fig, ax
 
-def plot_image(image):
-    prepare_canvas(image)
+def plot_image(image, figax=None):
+    fig, ax = prepare_canvas(image, figax)
     plt.show()
+    return fig, ax
 
 def save_image(filename, image):
     fig, ax = prepare_canvas(image)

@@ -2,18 +2,32 @@ import random
 import numpy as np
 from individual import Individual
 
+def evaluate(population, image):
+    # calculate the fitness for the entire population
+    for ind in population:
+        ind.update_fitness(image)
+
+    # sort population by fitness
+    population.sort(key=lambda ind: ind.fitness)
+
 class Evolve:
-    def __init__(self, image, pop_size=10, crossover_rate=0.5, individual_size=250, objective=0.3, mutation_rate=0.2):
+    def __init__(self, image, pop_size=10, crossover_rate=0.5, individual_size=250, objective=0.3, mutation_rate=0.2, unmutable_ratio=0, initial_pop=[]):
         # Save params
         self.original_image = image
         self.pop_size = pop_size
         self.crossover_rate = crossover_rate
         self.mutation_rate = mutation_rate
+        self.unmutable_ratio = unmutable_ratio
         self.individual_size = individual_size
         self.objective = objective  # Not used
 
         # Creates a random initial population with `pop_size` members
-        self.pop = [Individual(individual_size, image=image) for i in range(pop_size)]
+        self.pop = []
+        for ind in initial_pop:
+            self.pop.append(Individual(individual_size, image=image, circles=ind.circles))
+
+        for i in range(len(initial_pop), pop_size):
+            self.pop.append(Individual(individual_size, image=image))
 
         # Initialize counter
         self.generation = 0
@@ -39,9 +53,10 @@ class Evolve:
             
             pop.append(Individual(self.individual_size, circles=circles))
 
-        pop.sort(key=lambda ind: ind.fitness)
+        # Update children fitness
+        evaluate(pop, self.original_image)
+        children = pop
 
-        self.evaluate(pop)
         parents = self.pop
         self.pop = []
         i, j = 0, 0
@@ -54,33 +69,27 @@ class Evolve:
             else:
                 self.pop.append(parents[j])
                 j += 1
+        # print('Kept {} parents'.format(j))
+        return parents, children
+
+    def __str__(self):
+        result = ''
+        for ind in self.pop:
+            fit = str(ind.fitness*100)
+            result += str(ind) + '{}...{}\n'.format(fit[:3], fit[-2:])
+        return result
 
     def mutate(self):
-        for ind in self.pop:
-            ind.update_fitness(self.original_image)
+        keep = int(self.unmutable_ratio*self.pop_size)
+        # print('keep', keep, 'unmutated')
+        for ind in self.pop[keep:]:
+            ind.mutate(self.mutation_rate)
 
-        # sort population by fitness
-        self.pop.sort(key=lambda ind: ind.fitness)
+    def evaluate(self):
+        evaluate(self.pop, self.original_image)
 
-        # replace the population fraction with new random individuals
-        for idx in range(self.pop_size-1,int(self.pop_size*self.mutation_rate), -1):
-            self.pop[idx] = Individual(self.individual_size)
-
-    def evaluate(self, pop=None):
-        population = pop or self.pop
-        # calculate the fitness for the entire population
-        for ind in population:
-            ind.update_fitness(self.original_image)
-
-        # sort population by fitness
-        population.sort(key=lambda ind: ind.fitness)
-
-        if pop is None:
-            print('Gen:', self.generation, 'Fitness:', self.pop[0].fitness)
-
-
-    def plot_image(self):
-        self.pop[0].plot_image()
+    def plot_image(self, figax=None):
+        return self.pop[0].plot_image(figax)
 
     def save_image(self):
         filename = './results/generation_{}.png'.format(self.generation)

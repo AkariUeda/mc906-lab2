@@ -1,4 +1,5 @@
 import numpy as np
+import random
 
 from circle import Circle
 from image_from_circles import ImageFromCircles
@@ -17,13 +18,14 @@ class Individual:
         assert isinstance(size, int)
         assert all([isinstance(circle, Circle) for circle in circles])
 
+        self.individual_size = size
         self.circles = []
         self.fitness = 0
 
         if circles:
             self.circles = circles
-            if len(circles) < size:
-                print("Missing {} circles. Created them randomly".format(size - len(circles)))
+            # if len(circles) < size:
+            #     print("Missing {} circles. Created them randomly".format(size - len(circles)))
 
         # Fill in missing circles
         for i in range(len(self.circles), size):
@@ -50,12 +52,30 @@ class Individual:
         self.fitness = -compare_ssim(image, self.rendered, multichannel=True)
         return self.fitness
 
-    def plot_image(self):
-        plot_image(self.rendered)
+    def mutate(self, mutation_rate):
+        affected_genes = int(self.individual_size*mutation_rate)
+        for gene in random.sample(range(self.individual_size), affected_genes):
+            self.circles[gene] = Circle()
+
+    def plot_image(self, figax=None):
+        return plot_image(self.rendered, figax)
 
     def save_image(self, filename):
         save_image(filename, self.rendered)
 
+    def __str__(self):
+        to_char = lambda x: chr(65 + int(x % 26))
+        from_float = lambda x: to_char(x*26)
+
+        result = ''
+        for c in self.circles:
+            result += to_char(c.radius) + \
+                    from_float(c.left) + from_float(c.top) + \
+                    ''.join(to_char(color) for color in c.color) + '.'
+        return result
+
 if __name__ == "__main__":
     image = cv2.imread('mona.jpg')
-    Individual(size=1, circles=[Circle()]).update_fitness(image)
+    ind = Individual(size=1, circles=[Circle()])
+    ind.update_fitness(image)
+    ind.mutate(0.2)

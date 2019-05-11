@@ -19,12 +19,12 @@ class Circle:
         if left is None:
             self.left = random.uniform(0,1)
             self.top = random.uniform(0,1)
-            self.radius = random.uniform(5,50)
+            self.radius = random.uniform(0.1,1)
             if image is not None:
                 h, w, depth = image.shape
-                x = int(h * self.left)
-                y = int(w * self.top)
-                self.color = [int(c) for c in image[x, y]]
+                x = int(w * self.left)
+                y = int(h * self.top)
+                self.color = [int(c) for c in image[y, x]]
             else:
                 self.color = [random.uniform(0,255),random.uniform(0,255),random.uniform(0,255)]
             self.alpha = 0.8 #random.uniform(0,1)
@@ -42,10 +42,17 @@ class Circle:
         x = int(w * self.left)
         y = int(h * self.top)
         
-        radius = int(self.radius)
+        radius = int(self.radius * h / 4)
         color = self.color
         alpha = self.alpha
         
+        # render square
+        # Bound to image limit to avoid index errors
+        # bottom = min(h, y+radius)
+        # right = min(w, x+radius)
+        # section = image[y:bottom, x:right]
+        # image[y:bottom, x:right] = alpha*section + (1-alpha)*np.tile(color, (*section.shape[:2], 1))
+
         # Clone image to use as a canvas
         circle = np.copy(image)
         # Plot circle in this canvas
