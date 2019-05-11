@@ -14,6 +14,7 @@ class Evolve:
         self.max_ind_size = max_ind_size
         self.fitness_function = fitness_function
         self.objective = objective  # Not used
+        
 
         # Creates a random initial population with `pop_size` members
         self.pop = []
@@ -25,6 +26,8 @@ class Evolve:
 
         # Initialize counter
         self.generation = 0
+
+        self.solution = self.pop[0]
 
     def crossover(self):
         # New generation
@@ -56,20 +59,22 @@ class Evolve:
             pop.sort(key=lambda ind: ind.fitness)
         children = pop
 
-        parents = self.pop
-        self.pop = []
-        i, j = 0, 0
-        # Merge the best between parents and children
-        while i + j < self.pop_size:
-            # Less is better
-            if pop[i] < parents[j]:
-                self.pop.append(pop[i])
-                i += 1
-            else:
-                self.pop.append(parents[j])
-                j += 1
-        print('Kept {} parents'.format(j))
-        # self.pop = children
+        # parents = self.pop
+        # self.pop = []
+        # i, j = 0, 0
+        # # Merge the best between parents and children
+        # while i + j < self.pop_size:
+        #     # Less is better
+        #     if pop[i] < parents[j]:
+        #         self.pop.append(pop[i])
+        #         i += 1
+        #     else:
+        #         self.pop.append(parents[j])
+        #         j += 1
+        # print('Kept {} parents'.format(j))
+        self.pop = children
+        if self.pop[0].fitness < self.solution.fitness:
+            self.solution = self.pop[0]
         return parents, children
 
     def __str__(self):
@@ -87,6 +92,7 @@ class Evolve:
             ind.mutate(self.mutation_rate, self.original_image)
             ind.update_fitness(self.original_image)
         self.pop.sort(key=lambda ind: ind.fitness)
+
     def evaluate(self):
         if self.generation == 0:
             # calculate the fitness for the entire population
@@ -97,7 +103,7 @@ class Evolve:
             self.pop.sort(key=lambda ind: ind.fitness)
 
     def plot_image(self, figax=None):
-        return self.pop[0].plot_image(figax)
+        return self.solution.plot_image(figax)
 
     def save_image(self):
         filename = './results/generation_{}.png'.format(self.generation)
