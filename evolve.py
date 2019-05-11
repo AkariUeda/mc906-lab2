@@ -26,8 +26,8 @@ class Evolve:
         # Generates pop_size individuals from crossover
         for i in range(self.pop_size):
             # Get two parents i the top "crossover_rate" individuals
-            parents = [random.randint(0,self.crossover_rate*self.pop_size),
-                        random.randint(0,self.crossover_rate*self.pop_size)]
+            parents = [random.randint(0,int(self.crossover_rate*self.pop_size)),
+                        random.randint(0,int(self.crossover_rate*self.pop_size))]
 
             # choose from which parent we are going to pick each gene
             ind_circles = [random.randint(0,1) for j in range(self.individual_size)]
@@ -38,6 +38,8 @@ class Evolve:
                 circles.append(parent.circles[j])
             
             pop.append(Individual(self.individual_size, circles=circles))
+
+        pop.sort(key=lambda ind: ind.fitness)
 
         self.evaluate(pop)
         parents = self.pop
@@ -54,13 +56,14 @@ class Evolve:
                 j += 1
 
     def mutate(self):
-        # pick a fraction of the population individuals to mutate
-        mutation_count = int(self.mutation_rate*self.pop_size)
-        mi = [random.randint(0,self.pop_size-1) for i in range(mutation_count)]
-        print("Mutating individuals: {}".format(', '.join(map(str, mi))))
+        for ind in self.pop:
+            ind.update_fitness(self.original_image)
+
+        # sort population by fitness
+        self.pop.sort(key=lambda ind: ind.fitness)
 
         # replace the population fraction with new random individuals
-        for idx in mi:
+        for idx in range(self.pop_size-1,int(self.pop_size*self.mutation_rate), -1):
             self.pop[idx] = Individual(self.individual_size)
 
     def evaluate(self, pop=None):

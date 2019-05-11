@@ -22,8 +22,8 @@ class Circle:
             self.radius = random.uniform(5,50)
             if image is not None:
                 h, w, depth = image.shape
-                x = int(w * self.left)
-                y = int(h * self.top)
+                x = int(h * self.left)
+                y = int(w * self.top)
                 self.color = [int(c) for c in image[x, y]]
             else:
                 self.color = [random.uniform(0,255),random.uniform(0,255),random.uniform(0,255)]
