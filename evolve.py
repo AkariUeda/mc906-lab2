@@ -11,7 +11,7 @@ def evaluate(population, image):
     population.sort(key=lambda ind: ind.fitness)
 
 class Evolve:
-    def __init__(self, image, pop_size=10, crossover_rate=0.5, individual_size=250, objective=0.3, mutation_rate=0.2, unmutable_ratio=0, initial_pop=[]):
+    def __init__(self, image, pop_size=10, crossover_rate=0.5, individual_size=250, objective=0.3, mutation_rate=0.2, unmutable_ratio=0, initial_pop=[], fitness_function='SSIM_RGB'):
         # Save params
         self.original_image = image
         self.pop_size = pop_size
@@ -19,15 +19,16 @@ class Evolve:
         self.mutation_rate = mutation_rate
         self.unmutable_ratio = unmutable_ratio
         self.individual_size = individual_size
+        self.fitness_function = fitness_function
         self.objective = objective  # Not used
 
         # Creates a random initial population with `pop_size` members
         self.pop = []
         for ind in initial_pop:
-            self.pop.append(Individual(individual_size, image=image, circles=ind.circles))
+            self.pop.append(Individual(individual_size, image=image, circles=ind.circles, fitness_function=self.fitness_function))
 
         for i in range(len(initial_pop), pop_size):
-            self.pop.append(Individual(individual_size, image=image))
+            self.pop.append(Individual(individual_size, image=image, fitness_function=self.fitness_function))
 
         # Initialize counter
         self.generation = 0
@@ -51,7 +52,7 @@ class Evolve:
                 parent = self.pop[parents[indx]]
                 circles.append(parent.circles[j])
             
-            pop.append(Individual(self.individual_size, circles=circles))
+            pop.append(Individual(self.individual_size, circles=circles, fitness_function=self.fitness_function))
 
         # Update children fitness
         evaluate(pop, self.original_image)

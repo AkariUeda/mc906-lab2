@@ -1,5 +1,6 @@
 import numpy as np
 import random
+import inspect
 
 from circle import Circle
 from image_from_circles import ImageFromCircles
@@ -7,7 +8,7 @@ from utils import rms, plot_image, save_image
 from skimage.measure import compare_ssim
 
 class Individual:
-    def __init__(self, size, circles=[], image=None):
+    def __init__(self, size, circles=[], image=None, fitness_function='SSIM_RGB'):
         """ A individual from the population, which represents an image.
 
         image(array-like(shape=(h, w, 3))): Reference image for computing the fitness
@@ -21,6 +22,7 @@ class Individual:
         self.individual_size = size
         self.circles = []
         self.fitness = 0
+        self.fitness_function = fitness_function
 
         if circles:
             self.circles = circles
@@ -48,8 +50,15 @@ class Individual:
         assert isinstance(image, np.ndarray) and len(image.shape) == 3 and image.shape[2] == 3
         
         self.rendered = ImageFromCircles(circles=self.circles).render(image.shape)
-        # self.fitness = rms(image, self.rendered)
-        self.fitness = -compare_ssim(image, self.rendered, multichannel=True)
+
+        # If self.fitness_function is an actual function
+        if callable(self.fitness_function) and len(inspect.signature(self.fitness_function).parameters) == 2:
+            self.fitness =  self.fitness_function(image, self.rendered)
+        elif self.fitness_function == 'RMS':
+            self.fitness = rms(image, self.rendered)
+        else: # Use 'SSIM_RGB' by default
+            self.fitness =  -compare_ssim(image, self.rendered, multichannel=True)
+        
         return self.fitness
 
     def mutate(self, mutation_rate):
