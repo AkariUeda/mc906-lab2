@@ -42,7 +42,7 @@ class Circle:
         x = int(w * self.left)
         y = int(h * self.top)
         
-        radius = int(self.radius * h / 4)
+        radius = int(self.radius * h / 6)
         color = self.color
         alpha = self.alpha
         
