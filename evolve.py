@@ -13,7 +13,7 @@ class Evolve:
         self.objective = objective  # Not used
 
         # Creates a random initial population with `pop_size` members
-        self.pop = [Individual(individual_size) for i in range(pop_size)]
+        self.pop = [Individual(individual_size, image=image) for i in range(pop_size)]
 
         # Initialize counter
         self.generation = 0

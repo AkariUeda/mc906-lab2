@@ -5,7 +5,7 @@ import random
 FILL_CIRCLE = -1
 
 class Circle:
-    def __init__(self, left=None, top=None, radius=None, color=None, alpha=None):
+    def __init__(self, left=None, top=None, radius=None, color=None, alpha=None, image=None):
         """ It's a circle
 
         left(float): distance to the left normalized between [0.0, 1.0]
@@ -19,8 +19,14 @@ class Circle:
         if left is None:
             self.left = random.uniform(0,1)
             self.top = random.uniform(0,1)
-            self.radius = random.uniform(5,100)
-            self.color = [random.uniform(0,255),random.uniform(0,255),random.uniform(0,255)]
+            self.radius = random.uniform(0,1)
+            if image is not None:
+                h, w, depth = image.shape
+                x = int(w * self.left)
+                y = int(h * self.top)
+                self.color = [int(c) for c in image[x, y]]
+            else:
+                self.color = [random.uniform(0,255),random.uniform(0,255),random.uniform(0,255)]
             self.alpha = random.uniform(0,1)
         else:
             self.left = left
@@ -36,7 +42,7 @@ class Circle:
         x = int(w * self.left)
         y = int(h * self.top)
         
-        radius = int(self.radius)
+        radius = int(self.radius * image.shape[0] / 3)
         color = self.color
         alpha = self.alpha
         
