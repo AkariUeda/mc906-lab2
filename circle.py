@@ -19,7 +19,7 @@ class Circle:
         if left is None:
             self.left = random.uniform(0,1)
             self.top = random.uniform(0,1)
-            self.radius = random.uniform(0.1,1)
+            self.radius = random.uniform(0.01,1)
             if image is not None:
                 h, w, depth = image.shape
                 x = int(w * self.left)
