@@ -25,7 +25,7 @@ class Circle:
         # If the circle parameters were not passed, generate random circle
         self.left = random.uniform(0,1) if left is None else left
         self.top = random.uniform(0,1) if top is None else top
-        self.radius = random.uniform(0.01,0.1) if radius is None else radius
+        self.radius = random.uniform(0.01,0.2) if radius is None else radius
         self.alpha = random.uniform(0,1) if alpha is None else alpha
         self.used_heuristic = False
 

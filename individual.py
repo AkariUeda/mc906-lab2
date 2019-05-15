@@ -3,7 +3,7 @@ import random
 import inspect
 
 from circle import Circle
-from utils import rms, plot_image, save_image, ssim_rgb, create_weighted_hsv_ssim, render_circles
+from utils import rms, plot_image, save_image, ssim_rgb, create_weighted_hsv_ssim, render_circles, punish_white
 from skimage.measure import compare_ssim
 
 def get_fitness_function(fitness_function):
@@ -13,6 +13,8 @@ def get_fitness_function(fitness_function):
         return create_weighted_hsv_ssim()
     elif fitness_function == 'SSIM_RGB':
         return ssim_rgb
+    elif fitness_function == 'PUNISH_WHITE':
+        return punish_white
     else:
         raise ValueError('There is no fitness function named "{}"'.format(fitness_function))
 

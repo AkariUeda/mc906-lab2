@@ -18,6 +18,15 @@ def float_to_char(x):
     return int_to_char(x*26)
 
 
+def punish_white(a, b, max_diff=255):
+    h,w,d = a.shape
+    max_diff_color = np.full((3,), fill_value=max_diff, dtype=np.uint8)
+    diff = abs(a-b)
+    diff[np.where(np.logical_and(np.sum(a, axis=2) != 255*3, np.sum(b, axis=2) == 255*3))] = max_diff_color
+
+    return sum(diff.flatten())/(max_diff*h*w*d)-1
+
+
 def rms(a, b):
     """ Returns the Root Mean Square between two RGB images """
     pixel_count = a.shape[0] * a.shape[1]
