@@ -145,6 +145,14 @@ class Individual:
         """ Represent the circles as letters """
         result = '.'.join([str(c) for c in self.circles])
         return result
+    
+    def to_dict(self):
+        return {
+            'ind_size': self.ind_size,
+            'max_size': self.max_size,
+            'good_genes': self.good_genes,
+            'circles': [c.to_dict() for c in self.circles]
+        }
 
 if __name__ == "__main__":
     import cv2

@@ -111,6 +111,15 @@ class Circle:
             float_to_char(self.top) + \
             ''.join(int_to_char(color) for color in self.color)
 
+    def to_dict(self):
+        return {
+            'radius': self.radius,
+            'left': self.left,
+            'top': self.top,
+            'color': self.color.tolist(),
+            'alpha': self.alpha
+        }
+
     def __repr__(self):
         used_heuristic = '(copied)' if self.used_heuristic else ''
 

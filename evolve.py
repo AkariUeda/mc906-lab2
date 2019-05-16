@@ -1,3 +1,4 @@
+import json
 import random
 import numpy as np
 
@@ -208,6 +209,13 @@ class Evolve:
             raise Exception('You must evaluate before plotting the solution')
         filename = path.join(filepath, 'generation_{}.png'.format(self.generation))
         self.solution.save_image(filename)
+        if self.verbose: print('{} saved'.format(filename))
+
+    def save_json(self, filepath):
+        filename = path.join(filepath, 'generation_{}.json'.format(self.generation))
+        with open(filename, 'w') as f:
+            json.dump(self.to_dict(), f)
+        if self.verbose: print('{} saved'.format(filename))
 
     def __str__(self):
         result = ''
@@ -215,6 +223,22 @@ class Evolve:
             fit = str(ind.fitness*100)
             result += str(ind) + '{}...{}\n'.format(fit[:3], fit[-2:])
         return result
+
+    def to_dict(self):
+        return {
+        'pop_size': self.pop_size,
+        'ind_size': self.ind_size,
+        'ind_size_max': self.ind_size_max,
+        'good_genes': self.good_genes,
+        'crossover_rate': self.crossover_rate,
+        'newgen_parent_ratio': self.newgen_parent_ratio,
+        'children_ratio': self.children_ratio,
+        'mutation_rate': self.mutation_rate,
+        'inner_mutation_rate': self.inner_mutation_rate,
+        'unmutable_ratio': self.unmutable_ratio,
+        'pop': [i.to_dict() for i in self.pop],
+        'generation': self.generation
+        }
 
     
 if __name__ == "__main__":
@@ -245,5 +269,7 @@ if __name__ == "__main__":
     evolve.mutate()
     evolve.evaluate()
     print(evolve)
+    evolve.save_json('/tmp')
+
 
     
