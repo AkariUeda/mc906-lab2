@@ -31,6 +31,7 @@ class Evolve:
         good_genes=True,
         fitness_function=Individual.get_fitness_function('SSIM_RGB'),
         crossover_rate=0.5,
+        use_interval=False, 
         newgen_parent_ratio=0.0,
         children_ratio=1,
         mutation_rate=0.2,
@@ -49,7 +50,8 @@ class Evolve:
         fitness_function(string or callable): One of ['SSIM_RGB', 'RMS'] or a
                 callable expecting params (reference_image, rendered_image)
         crossover_rate(float): How many individuals from the current 
-                population should be used in crossover bound to [0, 1] 
+                population should be used in crossover bound to [0, 1]
+        use_interval(bool): Whether to use interval or random pick 
         newgen_parent_ratio(float): How many individuals in the new generation 
                 are allowed to be from the current one, bound to [0,1]
         children_ratio(float): How many individuals are created during 
@@ -77,6 +79,7 @@ class Evolve:
         assert 0 <= inner_mutation_rate <= 1
         assert 0 <= unmutable_ratio <= 1
         #TODO radius_range
+        #TODO use_interval
 
         # Objetive images
         self.original_image = image
@@ -94,6 +97,7 @@ class Evolve:
 
         # Crossover properties
         self.crossover_rate = crossover_rate
+        self.use_interval = use_interval
         self.newgen_parent_ratio = newgen_parent_ratio
         self.children_ratio = children_ratio
 
@@ -163,7 +167,10 @@ class Evolve:
 
             # Pick at least one gene (circle) from a different parents
             from_which = [0] * child_size
-            idx = random.sample(range(child_size), random.randint(1, child_size-1))
+            if not self.use_interval:
+                idx = random.sample(range(child_size), random.randint(1, child_size-1))
+            else:
+                idx = [j for j in range(random.randint(0, child_size), child_size)]
             for j in idx:
                 from_which[j] = 1
     
@@ -263,18 +270,17 @@ if __name__ == "__main__":
                     good_genes=True,
                     fitness_function=Individual.get_fitness_function('SSIM_RGB'),
                     crossover_rate=0.5,
+                    use_interval=True,
                     newgen_parent_ratio=0.0,
                     children_ratio=1,
                     mutation_rate=0.2,
                     inner_mutation_rate=1,
-                    unmutable_ratio=0)
-    print('Running evaluation...')
+                    unmutable_ratio=0,
+                    verbose=True)
     evolve.evaluate()
     print(evolve)
-    print('Running crossover...')
     evolve.crossover()
     print(evolve)
-    print('Running mutation...')
     evolve.mutate()
     evolve.evaluate()
     print(evolve)
