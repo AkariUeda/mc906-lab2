@@ -4,7 +4,7 @@ from time import time
 from evolve import Evolve
 from individual import Individual
 
-def experiment(name, pop_size=20, inner=1, usetime=True, use_interval=False, newgen_parent_ratio=1):
+def experiment(name, pop_size=20, inner=1, usetime=True, use_interval=False, newgen_parent_ratio=1, mutation_rate=0.03, crossover_rate=0.9):
     image = cv2.imread('mona-lisa.jpg')
     image = cv2.cvtColor(image,cv2.COLOR_BGR2RGB)  # Convert color loaded by OpenCV
 
@@ -15,11 +15,11 @@ def experiment(name, pop_size=20, inner=1, usetime=True, use_interval=False, new
                     ind_size_max=250,
                     good_genes=True,
                     fitness_function=Individual.get_fitness_function('SSIM_RGB'),
-                    crossover_rate=0.9,
+                    crossover_rate=crossover_rate,
                     use_interval=use_interval, 
                     newgen_parent_ratio=newgen_parent_ratio,
                     children_ratio=1,
-                    mutation_rate=0.03,
+                    mutation_rate=mutation_rate,
                     inner_mutation_rate=inner,
                     unmutable_ratio=0.5,
                     radius_range=(0.01, 0.1))
@@ -78,7 +78,19 @@ def experiment_5():
 
 # Seleção
 def experiment_6():
-    experiment('./exp6', newgen_parent_ratio=0)
+    experiment('./exp6', newgen_parent_ratio=0) # ta errado, tem que usar roleta
+
+# Taxa de mutação
+def experiment_7():
+    experiment('./exp7', mutation_rate=0.1)
+
+# Taxa de crossover
+def experiment_8():
+    experiment('./exp8', crossover_rate=0.1)
+
+# Substituição
+def experiment_9():
+    experiment('./exp9', newgen_parent_ratio=0)
 
 if __name__ == "__main__":
     # Read reference image
