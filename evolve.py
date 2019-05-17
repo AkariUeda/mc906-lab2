@@ -3,15 +3,12 @@ import random
 import numpy as np
 
 from os import path 
-from multiprocessing import Pool
 from individual import Individual
 
 
 def evaluate(population):
-    pool = Pool(4)
-
     # calculate the fitness for the entire population
-    for i, ind in enumerate(pool.map(Individual.update_fitness, population)):
+    for i, ind in enumerate(map(Individual.update_fitness, population)):
         fitness, rendered = ind
         population[i].fitness = fitness
         population[i].rendered = rendered
