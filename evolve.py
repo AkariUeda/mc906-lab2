@@ -37,7 +37,7 @@ class Evolve:
         mutation_rate=0.2,
         inner_mutation_rate=1,
         unmutable_ratio=0,
-        radius_range=(0.1,0.5),
+        radius_range=(0.1,0.2),
         verbose=False):
         """ Try to replicate an image using circles
 

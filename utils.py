@@ -153,3 +153,4 @@ def save_image(filename, image):
     """ Plot and save image """
     fig, ax = prepare_canvas(image)
     fig.savefig(filename)
+    fig.close()
