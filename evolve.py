@@ -8,17 +8,17 @@ from individual import Individual
 
 
 def evaluate(population):
-    pool = Pool(4)
+    pool = Pool(2)
 
     # calculate the fitness for the entire population
     for i, ind in enumerate(pool.map(Individual.update_fitness, population)):
         fitness, rendered = ind
         population[i].fitness = fitness
         population[i].rendered = rendered
-
+    pool.close()
+    pool.join()
     # sort population by fitness
     population.sort(key=lambda ind: ind.fitness)
-
 
 class Evolve:
     def __init__(

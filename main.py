@@ -11,8 +11,8 @@ def experiment(name, pop_size=20, inner=1, usetime=True, use_interval=False, new
     evolve = Evolve(image,
                     pop_size=pop_size,
                     initial_pop=[],
-                    ind_size=100,
-                    ind_size_max=250,
+                    ind_size=300,
+                    ind_size_max=400,
                     good_genes=True,
                     fitness_function=Individual.get_fitness_function('SSIM_RGB'),
                     crossover_rate=crossover_rate,
@@ -34,7 +34,7 @@ def experiment(name, pop_size=20, inner=1, usetime=True, use_interval=False, new
     last_best = evolve.solution.fitness
     last_enh = time()
 
-    number_generations = 1000
+    number_generations = 100
     for i in range(1, number_generations):
         evolve.crossover()
         evolve.mutate(expand_step=1)
@@ -58,11 +58,11 @@ def experiment(name, pop_size=20, inner=1, usetime=True, use_interval=False, new
 
 # Popsize
 def experiment_1():
-    experiment('./exp1', pop_size=50)
+    experiment('./exp1', pop_size=20)
 
 # Referencia
 def experiment_2():
-    experiment('./exp2')
+    experiment('./exp2', pop_size=10)
 
 # Mutação
 def experiment_3():
@@ -95,8 +95,8 @@ def experiment_9():
 if __name__ == "__main__":
     # Read reference image
     # experiment_1()
-    # experiment_2()
-    experiment_3()
+    experiment_2()
+    # experiment_3()
     # experiment_4()
     # experiment_5()
     # experiment_6()
