@@ -3,7 +3,9 @@ import random
 import inspect
 
 from circle import Circle
-from utils import rms, plot_image, save_image, ssim_rgb, create_weighted_hsv_ssim, render_circles, punish_white
+from utils import (rms, plot_image, save_image, ssim_rgb, 
+                    create_weighted_hsv_ssim, render_circles, normalized_pixel_diff_punish_white,
+                    normalized_pixel_diff, rgb_to_hsv)
 from skimage.measure import compare_ssim
 
 def get_fitness_function(fitness_function):
@@ -13,8 +15,12 @@ def get_fitness_function(fitness_function):
         return create_weighted_hsv_ssim()
     elif fitness_function == 'SSIM_RGB':
         return ssim_rgb
-    elif fitness_function == 'PUNISH_WHITE':
-        return punish_white
+    elif fitness_function == 'normalized_pixel_diff_punish_white':
+        return normalized_pixel_diff_punish_white
+    elif fitness_function == 'NORM_DIFF':
+        return normalized_pixel_diff
+    elif fitness_function == 'NORM_DIFF_HSV':
+        return normalized_pixel_diff_hsv
     else:
         raise ValueError('There is no fitness function named "{}"'.format(fitness_function))
 
@@ -26,6 +32,7 @@ class Individual:
         max_size=None,
         circles=[],
         good_genes=True,
+        radius_range=(0.1, 0.5),
         fitness_function=get_fitness_function('SSIM_RGB')):
         """ A individual from the population, which represents an image.
 
@@ -45,6 +52,7 @@ class Individual:
         assert all([isinstance(circle, Circle) for circle in circles])
         assert isinstance(good_genes, bool)
         assert Individual.is_valid_fitness_function(fitness_function) 
+        #TODO radius_range
 
         self.image = image
         self.ind_size = ind_size
@@ -52,10 +60,11 @@ class Individual:
         self.good_genes = good_genes
         self.fitness_function = fitness_function
         self.circles = [c.copy() for c in circles]
+        self.radius_range = radius_range
 
         # Fill in missing circles
         for i in range(len(self.circles), ind_size):
-            self.circles.append(Circle(image=image if good_genes else None))
+            self.circles.append(Circle(image=image if good_genes else None, radius_range=self.radius_range))
         
         self.fitness = None
         self.rendered = None
@@ -88,7 +97,7 @@ class Individual:
 
     def create_gene(self):
         """ Returns a new random circle. If `good_genes` is True, copy the center pixel color """
-        return Circle(image=self.image if self.good_genes else None)
+        return Circle(image=self.image if self.good_genes else None, radius_range=self.radius_range)
 
     def update_fitness(self):
         """ Update and returns `fitness` and the `rendered` attributes """
@@ -131,10 +140,10 @@ class Individual:
         # Unset fitness and rendered until next evaluation
         self.fitness, self.rendered = None, None
 
-    def plot_image(self, figax=None):
+    def plot_image(self, figax=None, xlabel=None):
         if self.rendered is None:
             raise Exception('You must evaluate before plotting the solution')
-        return plot_image(self.rendered, figax)
+        return plot_image(self.rendered, figax, xlabel=xlabel or '{:.6f}'.format(self.fitness))
 
     def save_image(self, filename):
         if self.rendered is None:

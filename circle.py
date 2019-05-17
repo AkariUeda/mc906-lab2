@@ -12,7 +12,7 @@ FIXED_ALPHA = 0.8
 
 
 class Circle:
-    def __init__(self, left=None, top=None, radius=None, color=None, alpha=FIXED_ALPHA, image=None):
+    def __init__(self, left=None, top=None, radius=None, color=None, alpha=FIXED_ALPHA, image=None, radius_range=(0.01, 0.2)):
         """ It's a circle
 
         left(float): distance to the left normalized between [0.0, 1.0]
@@ -25,9 +25,10 @@ class Circle:
         # If the circle parameters were not passed, generate random circle
         self.left = random.uniform(0,1) if left is None else left
         self.top = random.uniform(0,1) if top is None else top
-        self.radius = random.uniform(0.01,0.2) if radius is None else radius
+        self.radius = random.uniform(*radius_range) if radius is None else radius
         self.alpha = random.uniform(0,1) if alpha is None else alpha
         self.used_heuristic = False
+        self.radius_range = radius_range
 
         if color is None:
             # If the image is set, use the color at the circle center
@@ -43,7 +44,7 @@ class Circle:
             self.color = color
     
     def copy(self):
-        return Circle(self.left, self.top, self.radius, self.color, self.alpha)
+        return Circle(self.left, self.top, self.radius, self.color, self.alpha, radius_range=self.radius_range)
 
     def mutate(self, mutation_rate=0.2):
         """ Replace all attributes, using the weighted sum between this circle
@@ -52,7 +53,7 @@ class Circle:
              return (1 - w) * a + w * b
 
         # Create a new random circle
-        new = Circle()
+        new = Circle(radius_range=self.radius_range)
 
         self.left = add_weighted(self.left, new.left, mutation_rate)
         self.top = add_weighted(self.top, new.top, mutation_rate)
@@ -71,7 +72,7 @@ class Circle:
 
         h, w, depth = image.shape
         
-        radius = int(self.radius * h)
+        radius = int(self.radius * min(h, w))
         x = max(0, int(w * self.left - radius))
         y = max(0, int(h * self.top - radius))
 

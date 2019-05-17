@@ -36,6 +36,7 @@ class Evolve:
         mutation_rate=0.2,
         inner_mutation_rate=1,
         unmutable_ratio=0,
+        radius_range=(0.1,0.5),
         verbose=False):
         """ Try to replicate an image using circles
 
@@ -64,7 +65,7 @@ class Evolve:
 
         # Validate params
         assert isinstance(pop_size, int)
-        assert all(isinstance(ind, Individual) for ind in initial_pop)
+        assert all(isinstance(ind, Individual) for ind in initial_pop), set(type(ind) for ind in initial_pop)
         assert isinstance(ind_size, int)
         assert isinstance(ind_size_max, int) and ind_size <= ind_size_max
         assert isinstance(good_genes, bool)
@@ -75,6 +76,7 @@ class Evolve:
         assert 0 <= mutation_rate <= 1
         assert 0 <= inner_mutation_rate <= 1
         assert 0 <= unmutable_ratio <= 1
+        #TODO radius_range
 
         # Objetive images
         self.original_image = image
@@ -88,6 +90,7 @@ class Evolve:
         self.ind_size_max = ind_size_max
         self.good_genes = good_genes
         self.fitness_function = fitness_function
+        self.radius_range = radius_range
 
         # Crossover properties
         self.crossover_rate = crossover_rate
@@ -123,7 +126,8 @@ class Evolve:
                     max_size=self.ind_size_max, 
                     fitness_function=self.fitness_function, 
                     good_genes=self.good_genes,
-                    circles=circles
+                    circles=circles,
+                    radius_range=self.radius_range
                 )
 
     def evaluate(self):

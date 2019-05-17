@@ -18,7 +18,7 @@ def float_to_char(x):
     return int_to_char(x*26)
 
 
-def punish_white(a, b, max_diff=255):
+def normalized_pixel_diff_punish_white(a, b, max_diff=255):
     h,w,d = a.shape
     max_diff_color = np.full((3,), fill_value=max_diff, dtype=np.uint8)
     diff = abs(a-b)
@@ -26,6 +26,8 @@ def punish_white(a, b, max_diff=255):
 
     return sum(diff.flatten())/(max_diff*h*w*d)-1
 
+def normalized_pixel_diff_hsv(a, b):
+    return normalized_pixel_diff(rgb_to_hsv(a), rgb_to_hsv(b))
 
 def rms(a, b):
     """ Returns the Root Mean Square between two RGB images """
@@ -123,19 +125,27 @@ def prepare_canvas(image, figax=None):
     (array-like of (Figure, AxesSubplot)): Canvas elements in which the image got plotted
     """
     # Prepare canvas
-    fig, ax = figax if figax is not None else plt.subplots(figsize=(6, 6))
+    if figax is None:
+        fig, ax = plt.subplots(figsize=(6, 6))
+
+    else:
+        fig, ax = figax
+        ax.clear()
 
     # Disable plot ticks and their labels
     ax.tick_params(axis='both', which='both', 
                 bottom=False, left=False,
                 labelbottom=False, labelleft=False)
+
     ax.imshow(image)
     fig.canvas.draw()
     return fig, ax
 
-def plot_image(image, figax=None):
+def plot_image(image, figax=None, xlabel=None):
     """ Plot and show image """
     fig, ax = prepare_canvas(image, figax)
+    if xlabel is not None:
+        ax.set_xlabel(xlabel)
     plt.show()
     return fig, ax
 
