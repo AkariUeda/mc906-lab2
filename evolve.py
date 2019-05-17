@@ -3,7 +3,6 @@ import random
 import numpy as np
 
 from os import path 
-from multiprocessing import Pool
 from individual import Individual
 
 
@@ -11,7 +10,7 @@ def evaluate(population):
     pool = Pool(2)
 
     # calculate the fitness for the entire population
-    for i, ind in enumerate(pool.map(Individual.update_fitness, population)):
+    for i, ind in enumerate(map(Individual.update_fitness, population)):
         fitness, rendered = ind
         population[i].fitness = fitness
         population[i].rendered = rendered
@@ -32,6 +31,7 @@ class Evolve:
         fitness_function=Individual.get_fitness_function('SSIM_RGB'),
         crossover_rate=0.5,
         use_interval=False, 
+        use_roleta=False,
         newgen_parent_ratio=0.0,
         children_ratio=1,
         mutation_rate=0.2,
@@ -80,6 +80,7 @@ class Evolve:
         assert 0 <= unmutable_ratio <= 1
         #TODO radius_range
         #TODO use_interval
+        #TODO use_roleta
 
         # Objetive images
         self.original_image = image
@@ -98,6 +99,7 @@ class Evolve:
         # Crossover properties
         self.crossover_rate = crossover_rate
         self.use_interval = use_interval
+        self.use_roleta = use_roleta
         self.newgen_parent_ratio = newgen_parent_ratio
         self.children_ratio = children_ratio
 
@@ -149,18 +151,35 @@ class Evolve:
         # New generation
         self.generation += 1
         children = []
+        parent_pairs = []
 
         cross_parents = int(self.crossover_rate * self.pop_size)
+        children_count = int(self.children_ratio * self.pop_size)
+
+        if not self.use_roleta:
+            for i in range(children_count):
+                parent_pairs.append(random.sample(self.pop[:cross_parents], 2))
+        else:
+            accum = 0
+            accums = np.zeros(shape=(self.pop_size))
+            for i, ind in enumerate(self.pop):
+                accum += ind.fitness
+                accums[i] = accum
+            accums /= accum
+
+            for i in range(children_count):
+                a = np.searchsorted(accums, random.uniform(0, 1))
+                b = np.searchsorted(accums, random.uniform(0, 1))
+                parent_pairs.append([self.pop[a], self.pop[b]])
 
         # If crossover_rate is 0, skip crossover 
         if self.crossover_rate == 0:
             return
     
         # Generates new individuals from crossover
-        children_count = int(self.children_ratio * self.pop_size)
         for i in range(children_count):
             # Get two parents in the crossover_rate range
-            parents = random.sample(self.pop[:cross_parents], 2)
+            parents = parent_pairs[i]
 
             # Get the smallest parent size
             child_size = min(parents[0].ind_size, parents[1].ind_size)
@@ -276,6 +295,7 @@ if __name__ == "__main__":
                     mutation_rate=0.2,
                     inner_mutation_rate=1,
                     unmutable_ratio=0,
+                    use_roleta=True,
                     verbose=True)
     evolve.evaluate()
     print(evolve)

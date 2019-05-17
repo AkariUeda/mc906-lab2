@@ -4,7 +4,7 @@ from time import time
 from evolve import Evolve
 from individual import Individual
 
-def experiment(name, pop_size=20, inner=1, usetime=True, use_interval=False, newgen_parent_ratio=1, mutation_rate=0.03, crossover_rate=0.9):
+def experiment(name, pop_size=20, inner=1, usetime=True, use_interval=False, newgen_parent_ratio=1, mutation_rate=0.03, crossover_rate=0.9, use_roleta=False):
     image = cv2.imread('mona-lisa.jpg')
     image = cv2.cvtColor(image,cv2.COLOR_BGR2RGB)  # Convert color loaded by OpenCV
 
@@ -22,7 +22,8 @@ def experiment(name, pop_size=20, inner=1, usetime=True, use_interval=False, new
                     mutation_rate=mutation_rate,
                     inner_mutation_rate=inner,
                     unmutable_ratio=0.5,
-                    radius_range=(0.01, 0.1))
+                    radius_range=(0.01, 0.1),
+                    use_roleta=use_roleta)
 
     evolve.evaluate()
     evolve.save_image(name)
@@ -78,7 +79,7 @@ def experiment_5():
 
 # Seleção
 def experiment_6():
-    experiment('./exp6', newgen_parent_ratio=0) # ta errado, tem que usar roleta
+    experiment('./exp6', use_roleta=True)
 
 # Taxa de mutação
 def experiment_7():
