@@ -4,6 +4,7 @@ import numpy as np
 
 from os import path 
 from individual import Individual
+from multiprocessing import Pool
 
 
 def evaluate(population):

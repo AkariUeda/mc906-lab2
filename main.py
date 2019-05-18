@@ -35,7 +35,7 @@ def experiment(name, pop_size=20, inner=1, usetime=True, use_interval=False, new
     last_best = evolve.solution.fitness
     last_enh = time()
 
-    number_generations = 100
+    number_generations = 90
     for i in range(1, number_generations):
         evolve.crossover()
         evolve.mutate(expand_step=1)
@@ -71,32 +71,32 @@ def experiment_3():
 
 # Criterio da parada
 def experiment_4():
-    experiment('./exp4', usetime=False)
+    experiment('./exp4', usetime=False, inner=0.1)
 
 # Crossover
 def experiment_5():
-    experiment('./exp5', use_interval=True)
+    experiment('./exp5', use_interval=True, inner=0.1)
 
 # Seleção
 def experiment_6():
-    experiment('./exp6', use_roleta=True)
+    experiment('./exp6', use_roleta=True, inner=0.1)
 
 # Taxa de mutação
 def experiment_7():
-    experiment('./exp7', mutation_rate=0.1)
+    experiment('./exp7', mutation_rate=0.2, inner=0.1)
 
 # Taxa de crossover
 def experiment_8():
-    experiment('./exp8', crossover_rate=0.1)
+    experiment('./exp8', crossover_rate=0.5, inner=0.1)
 
 # Substituição
 def experiment_9():
-    experiment('./exp9', newgen_parent_ratio=0)
+    experiment('./exp9', newgen_parent_ratio=0, inner=0.1)
 
 if __name__ == "__main__":
     # Read reference image
     # experiment_1()
-    experiment_2()
+    # experiment_2()
     # experiment_3()
     # experiment_4()
     # experiment_5()
